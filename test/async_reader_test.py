@@ -1,11 +1,12 @@
-import pytest
 import csv
-from datetime import datetime, timedelta
-import redis
 import pickle
+from unittest.mock import patch, Mock
+
+import pytest
+import redis
 
 from async_reader import read_symbols, download_stock_data, calculate_bollinger_bands, calculate_technical_indicators, \
-    store_dataframe_in_redis, get_stock_data
+    store_dataframe_in_redis
 
 
 @pytest.fixture
@@ -49,15 +50,24 @@ def test_calculate_bollinger_bands(example_stock_data):
     assert 'bb_high' in example_stock_data.columns
 
 
+@pytest.fixture
+def mock_redis():
+    mock_redis = Mock(spec=redis.StrictRedis)
+
+    with patch('async_reader.redis.Redis', return_value=mock_redis):
+        yield mock_redis
 
 
-def test_store_dataframe_in_redis(example_stock_data):
+def test_store_dataframe_in_redis(example_stock_data, mock_redis):
     store_dataframe_in_redis(example_stock_data)
-    r = redis.Redis(host='localhost', port=6379, db=0)
-    data_serialized = r.get('past_week_stock_data')
-    data = pickle.loads(data_serialized)
-    assert data.equals(example_stock_data)
 
+    mock_redis.set.assert_called_with('past_week_stock_data', pickle.dumps(example_stock_data))
+
+    data_serialized = pickle.dumps(example_stock_data)
+    mock_redis.get.return_value = data_serialized
+    data = pickle.loads(mock_redis.get('past_week_stock_data'))
+
+    assert data.equals(example_stock_data)
 
 
 if __name__ == '__main__':
