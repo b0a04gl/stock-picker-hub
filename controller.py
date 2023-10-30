@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, redirect, url_for, session
 
 from service import DataService
 
@@ -10,6 +10,15 @@ data_service = DataService(redis_host='localhost', redis_port=6379, redis_db=0)
 @app.route('/')
 def index():
     return render_template('index.html')
+
+
+app.secret_key = 'iahjda1210nskd120'
+
+
+@app.route('/screener/results', methods=['GET'])
+def show_results():
+    data = session.get('data')
+    return render_template('results.html', data=data)
 
 
 @app.route('/screener/list', methods=['GET'])
@@ -47,9 +56,14 @@ def create_screener():
         screener_id = data_service.store_screen(conditions)
 
         stock_data = data_service.retrieve_data_for_screener(screener_id)
+        #
+        data = {"success": True, "data": stock_data.to_dict(orient='records')}
+        # return redirect(url_for('show_results', data=data))
 
-        return jsonify({"success": True, "data": stock_data.to_dict(orient='records')})
+        # Store data in the session
+        session['data'] = data
 
+        return redirect(url_for('show_results'))
     except Exception as e:
         print(e)
         return jsonify({"success": False, "error": str(e)})
