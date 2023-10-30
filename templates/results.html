@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stock Screener Results</title>
+</head>
+<body>
+    <h1>Stock Screener Results</h1>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>EMA_12</th>
+                <th>EMA_200</th>
+                <th>EMA_26</th>
+                <th>EMA_9</th>
+                <th>adj close</th>
+                <th>bb_high</th>
+                <th>bb_low</th>
+                <th>bb_mid</th>
+                <th>close</th>
+                <th>dollar_volume</th>
+                <th>high</th>
+                <th>low</th>
+                <th>macd</th>
+                <th>open</th>
+                <th>rsi</th>
+                <th>volume</th>
+            </tr>
+        </thead>
+        <tbody id="result-table">
+            {% for item in data %}
+            <tr>
+                <td>{{ item.EMA_12 }}</td>
+                <td>{{ item.EMA_200 }}</td>
+                <td>{{ item.EMA_26 }}</td>
+                <td>{{ item.EMA_9 }}</td>
+                <td>{{ item['adj close'] }}</td>
+                <td>{{ item.bb_high }}</td>
+                <td>{{ item.bb_low }}</td>
+                <td>{{ item.bb_mid }}</td>
+                <td>{{ item.close }}</td>
+                <td>{{ item.dollar_volume }}</td>
+                <td>{{ item.high }}</td>
+                <td>{{ item.low }}</td>
+                <td>{{ item.macd }}</td>
+                <td>{{ item.open }}</td>
+                <td>{{ item.rsi }}</td>
+                <td>{{ item.volume }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
