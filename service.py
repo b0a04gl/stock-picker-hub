@@ -57,7 +57,7 @@ class DataService:
         for condition in conditions:
             indicator_name = condition['indicator_name']
             operation = condition['operation']
-            value = condition['value']
+            value = float(condition['value'])
             print("condition to apply : ", condition)
             if operation == ">":
                 df = df[df[indicator_name] > value]
