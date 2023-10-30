@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stock Screener</title>
+</head>
+<body>
+    <h1>Stock Screener</h1>
+
+    <form id="screener-form">
+        <div id="conditions">
+            <div class="condition">
+                <input type="text" name="conditions[0][indicator_name]" placeholder="Indicator Name" />
+                <input type="text" name="conditions[0][operation]" placeholder="Operation" />
+                <input type="number" name="conditions[0][value]" placeholder="Value" />
+            </div>
+        </div>
+        <button type="button" id="add-condition">Add Condition</button>
+        <button type="submit">Create Screener</button>
+    </form>
+
+    <div id="result">
+        <!-- API response will be displayed here -->
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const screenerForm = document.getElementById("screener-form");
+            const conditionsDiv = document.getElementById("conditions");
+            const addConditionButton = document.getElementById("add-condition");
+            const resultDiv = document.getElementById("result");
+
+            let conditionCount = 1;
+
+            addConditionButton.addEventListener("click", function () {
+                const newConditionDiv = document.createElement("div");
+                newConditionDiv.className = "condition";
+
+                const indicatorInput = document.createElement("input");
+                indicatorInput.setAttribute("type", "text");
+                indicatorInput.setAttribute("name", `conditions[${conditionCount}][indicator_name]`);
+                indicatorInput.setAttribute("placeholder", "Indicator Name");
+
+                const operationInput = document.createElement("input");
+                operationInput.setAttribute("type", "text");
+                operationInput.setAttribute("name", `conditions[${conditionCount}][operation]`);
+                operationInput.setAttribute("placeholder", "Operation");
+
+                const valueInput = document.createElement("input");
+                valueInput.setAttribute("type", "number");
+                valueInput.setAttribute("name", `conditions[${conditionCount}][value]`);
+                valueInput.setAttribute("placeholder", "Value");
+
+                newConditionDiv.appendChild(indicatorInput);
+                newConditionDiv.appendChild(operationInput);
+                newConditionDiv.appendChild(valueInput);
+
+                conditionsDiv.appendChild(newConditionDiv);
+                conditionCount++;
+            });
+
+            screenerForm.addEventListener("submit", async function (event) {
+                event.preventDefault();
+
+                const formData = new FormData(screenerForm);
+                const conditions = [];
+
+                for (let i = 0; i < conditionCount; i++) {
+                    const condition = {
+                        indicator_name: formData.get(`conditions[${i}][indicator_name]`),
+                        operation: formData.get(`conditions[${i}][operation]`),
+                        value: formData.get(`conditions[${i}][value]`)
+                    };
+                    conditions.push(condition);
+                }
+
+                const response = await fetch("/screener/create", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ conditions }),
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    resultDiv.textContent = JSON.stringify(result, null, 2);
+                } else {
+                    resultDiv.textContent = "Failed to create the screener.";
+                }
+            });
+        });
+    </script>
+</body>
+</html>
