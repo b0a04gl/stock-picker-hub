@@ -4,25 +4,25 @@
     <title>Stock Screener</title>
 </head>
 <body>
-    <h1>Stock Screener</h1>
+<h1>Stock Screener</h1>
 
-    <form id="screener-form">
-        <div id="conditions">
-            <div class="condition">
-                <input type="text" name="conditions[0][indicator_name]" placeholder="Indicator Name" />
-                <input type="text" name="conditions[0][operation]" placeholder="Operation" />
-                <input type="number" name="conditions[0][value]" placeholder="Value" />
-            </div>
+<form id="screener-form">
+    <div id="conditions">
+        <div class="condition">
+            <input type="text" name="conditions[0][indicator_name]" placeholder="Indicator Name"/>
+            <input type="text" name="conditions[0][operation]" placeholder="Operation"/>
+            <input type="number" name="conditions[0][value]" placeholder="Value"/>
         </div>
-        <button type="button" id="add-condition">Add Condition</button>
-        <button type="submit">Create Screener</button>
-    </form>
-
-    <div id="result">
-        <!-- API response will be displayed here -->
     </div>
+    <button type="button" id="add-condition">Add Condition</button>
+    <button type="submit">Create Screener</button>
+</form>
 
-    <script>
+<div id="result">
+    <!-- API response will be displayed here -->
+</div>
+
+<script>
         document.addEventListener("DOMContentLoaded", function () {
             const screenerForm = document.getElementById("screener-form");
             const conditionsDiv = document.getElementById("conditions");
@@ -81,14 +81,16 @@
                     body: JSON.stringify({ conditions }),
                 });
 
-                if (response.ok) {
-                    const result = await response.json();
-                    resultDiv.textContent = JSON.stringify(result, null, 2);
+               if (response.ok) {
+                    // Redirect to the results page
+                    window.location.href = '/screener/results'; // Replace with the actual URL of the results page
                 } else {
                     resultDiv.textContent = "Failed to create the screener.";
                 }
+
             });
         });
-    </script>
+
+</script>
 </body>
 </html>

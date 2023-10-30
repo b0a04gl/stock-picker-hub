@@ -14,6 +14,5 @@ def write_symbols():
         writer.writerow(symbols_list)
 
 
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     write_symbols()
